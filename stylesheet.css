@@ -54,6 +54,12 @@ body {
     margin: 10px;
     justify-content: center;
   }
+
+  #pokeinput {
+    width: 90%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
   #pokebtn {
     margin-top: 10px;
   }
