@@ -8,7 +8,7 @@ pokeBtn.addEventListener("click", () => {
   if (nameOrID) {
     const apiSource = `https://pokeapi.co/api/v2/pokemon/${nameOrID}`;
 
-    const cacheData = localStorage.getItem("pokeData");
+    const cacheData = sessionStorage.getItem("pokeData");
 
     if (cacheData) {
       displayPokeData(JSON.parse(cacheData));
@@ -22,11 +22,11 @@ pokeBtn.addEventListener("click", () => {
           }
         })
         .then((data) => {
-          localStorage.setItem(apiSource, JSON.stringify(data));
+          sessionStorage.setItem(apiSource, JSON.stringify(data));
           displayPokeData(data);
         })
         .catch((Error) => {
-          console.Error("Error: ", Error);
+          console.error("Error: ", Error);
           resultInfo.textContent = "error occurred while gathering info";
         });
     }
@@ -37,20 +37,30 @@ function displayPokeData(data) {
   while (resultInfo.firstChild) {
     resultInfo.removeChild(resultInfo.firstChild);
   }
-  const pokeName = document.createElement("p");
-  pokeName.textContent = "Name: " + data.name;
 
-  const pokeHeight = document.createElement("p");
-  pokeHeight.textContent = "height: " + data.height;
+  const pokeSprite = document.createElement("img");
+  pokeSprite.src = data.sprites.front_default;
+  pokeSprite.alt = "Pokemon Sprite";
+  resultInfo.appendChild(pokeSprite);
 
-  const pokeWeight = document.createElement("p");
-  pokeWeight.textContent = "Weight: " + data.weight;
+  function createParagraph(text) {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = text;
+    return paragraph;
+  }
 
-  const pokeType = document.createElement("p");
-  pokeType.textContent = "Type: " + data.types;
+  resultInfo.appendChild(createParagraph("Name: " + data.name));
+  resultInfo.appendChild(createParagraph("Height: " + data.height));
+  resultInfo.appendChild(createParagraph("Weight: " + data.weight));
 
-  resultInfo.appendChild(pokeName);
-  resultInfo.appendChild(pokeHeight);
-  resultInfo.appendChild(pokeWeight);
-  resultInfo.appendChild(pokeType);
+  if (data.types.length > 0) {
+    let typeText = "Type: ";
+    for (let i = 0; i < data.types.length; i++) {
+      typeText += data.types[i].type.name;
+      if (i !== data.types.length - 1) {
+        typeText += ", ";
+      }
+    }
+    resultInfo.appendChild(createParagraph(typeText));
+  }
 }
